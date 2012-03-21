@@ -1,0 +1,17 @@
+{
+  "name": "compiler-js",
+  "version": "0.0.1-8",
+  "private": true,
+  "dependencies": {
+    "express": "2.5.2",
+    "jade": ">= 0.0.1",
+    "mongoose": "2.5.x"
+  },
+  "subdomain": "compiler-js",
+  "scripts": {
+    "start": "app.js"
+  },
+  "engines": {
+    "node": "v0.6.x"
+  }
+}

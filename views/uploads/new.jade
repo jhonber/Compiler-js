@@ -1,0 +1,12 @@
+h1 New upload
+form(action='/uploads',method='POST',enctype='multipart/form-data')
+	p
+		label(for='src') Source File:
+	p
+		input(type='file', name='src')
+	p
+		label(for='in') Input File:
+	p
+		input(type='file', name='in')
+	p
+		input(type='submit')
