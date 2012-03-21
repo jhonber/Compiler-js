@@ -6,3 +6,13 @@ body {
 a {
   color: #00B7FF;
 }
+
+a:hover {
+	text-decoration: underline;
+}
+
+.nick {
+	text-decoration: none;
+	font-size: 15px;
+	padding-left: 10px;
+}
