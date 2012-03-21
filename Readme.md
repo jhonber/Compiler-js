@@ -1,5 +1,9 @@
 # Compiler-js
 
+This tool compiles source code in several languages.
+
+Try it! [compiler-js.jit.su](http://compiler-js.jit.su)
+
 ### Usage
 You should upload two files:
 
