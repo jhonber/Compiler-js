@@ -113,13 +113,13 @@ app.post('/uploads', function(req, res){
 							});
 						}
 						else {
-							res.write('Ouput:\n\n' + StdError + '\n\nRuntime Error.\n');
+							res.send('Ouput:\n\n' + StdError + '\n\nRuntime Error.\n', { 'Content-Type': 'text/plain' })
 							res.end();
 						}
 					});
 				}
 				else {
-					res.write('Ouput:\n\n' + StdError + '\n\nCompilation Error.\n');
+					res.send('Ouput:\n\n' + StdError + '\n\nCompilation Error.\n', { 'Content-Type': 'text/plain' })
 					res.end();
 				}
 			});
