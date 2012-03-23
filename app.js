@@ -74,41 +74,54 @@ app.post('/uploads', function(req, res){
 
 	if(ext[1] == 'c' || ext[1] == 'cpp'){
 		var src_file = root + rq.src.name
-			, kill_msj = ""
-			, exec_file = root + ext[0]
-			, command1 = 'g++ ' + src_file + ' -o ' + exec_file + '.bin'
-			//, command2 = exec_file + '.bin' + ' < ' + exec_file + '.in > ' +  exec_file + '.out'
-			, command2 = exec_file + '.bin' + ' < ' + exec_file + '.in'
+		  , StdError
+		  , kill_msj = ""
+		  , exec_file = root + ext[0]
+		  , command1 = 'g++ ' + src_file + ' -o ' + exec_file + '.bin'
+		  //, command2 = exec_file + '.bin' + ' < ' + exec_file + '.in > ' +  exec_file + '.out'
+		  , command2 = exec_file + '.bin' + ' < ' + exec_file + '.in'
 
-			, child = exec(command1, {timeout: TIME_LIMIT},function (error, stdout, stderr) {
+		  , child = exec(command1, {timeout: TIME_LIMIT},function (error, stdout, stderr) {
 				console.log('stdout: ' + stdout);
-				console.log('stderr: ' + stderr);
-				if (error !== null) {
-					console.log('exec compilation: ' + error.signal);
-				}
+				console.log('compiling stderr: ' + stderr);
+				StdError = stderr.replace(/.*uploads\//g,'');
+
 			});
 
 			child.on('exit', function(code){
+				if(code == 0) {
+					child2 = exec(command2,{timeout: TIME_LIMIT, maxBuffer: MAX_BUFFER}, function(error, stdout, stderr){
+						console.log('stderr: ' + stderr);
+						StdError = stderr.replace(/.*uploads\//g,'');
 
-				child2 = exec(command2,{timeout: TIME_LIMIT, maxBuffer: MAX_BUFFER}, function(error, stdout, stderr){
-					//console.log('stdout: ' + stdout);
-					console.log('stderr: ' + stderr);
+						if (error !== null) {
 
-					if (error !== null) {
-						if (error.signal == 'SIGTERM') {
-							console.log("Killed")
-							kill_msj = 'Your program is very slow or never ends, or buffer stdout is overflow. \n Signal: SIGTERM \n\n';
+							if (error.signal == 'SIGTERM') {
+								console.log("Killed")
+								kill_msj = 'Your program is very slow or never ends, or buffer stdout is overflow. \n Signal: SIGTERM \n\n';
+							}
 						}
-					}
-					 fs.writeFileSync(exec_file + '.out', stdout, encoding='utf8');
-				});
 
-				child2.on('exit', function(code){
-					fs.readFile(exec_file + '.out', function(err, data){
-						res.write('Ouput:\n\n' + kill_msj + data);
-						res.end();
+						fs.writeFileSync(exec_file + '.out', stdout, encoding='utf8');
 					});
-				});	
+
+					child2.on('exit', function(code){
+						if(code == 0) {
+							fs.readFile(exec_file + '.out', function(err, data){
+								res.write('Ouput:\n\n' + kill_msj + data);
+								res.end();
+							});
+						}
+						else {
+							res.write('Ouput:\n\n' + StdError + '\n\nRuntime Error.\n');
+							res.end();
+						}
+					});
+				}
+				else {
+					res.write('Ouput:\n\n' + StdError + '\n\nCompilation Error.\n');
+					res.end();
+				}
 			});
 	}
 	else if(ext[1] == '.py'){
