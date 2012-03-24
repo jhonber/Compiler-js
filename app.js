@@ -21,7 +21,7 @@ var TIME_LIMIT = 5*1000  	// TIME_LIMIT is the Max time to running .bin (5 sec)
 
 var pwd = exec('pwd', function(error, stdout, stderr){
 		var pat = stdout.substring(0,stdout.length-1);
-		path = new RegExp(pat,'g');
+		path = new RegExp(pat+'/static/uploads/','g');
 	});
 
 var app = module.exports = express.createServer();
