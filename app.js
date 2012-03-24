@@ -69,15 +69,16 @@ app.get('/uploads/new', function(req,res){
 });
 
 app.post('/uploads', function(req, res){
-	var root = __dirname + '/static/uploads/';
-	var rq = req.files;
-	for(var f in rq){
-		var data = fs.readFileSync(rq[f].path, 'utf8');
-		fs.writeFileSync(root + rq[f].name, data, encoding='utf8')
-	}
+	var root = __dirname + '/static/uploads/'
+	  , ext  = req.files.src.name.split('.')
+	  , rq   = req.files
+	  , base = req.files;
 
-	//To see file extension
-	var ext = rq.src.name.split('.');
+	var data_src = fs.readFileSync(base.src.path, 'utf8')
+	  , data_in  = fs.readFileSync(base.in.path, 'utf8')
+
+	fs.writeFileSync(root + base.src.name, data_src, encoding='utf8');
+	fs.writeFileSync(root + ext[0] + '.in', data_in, encoding='utf8')
 
 	if(ext[1] == 'c' || ext[1] == 'cpp'){
 		var src_file = root + rq.src.name
